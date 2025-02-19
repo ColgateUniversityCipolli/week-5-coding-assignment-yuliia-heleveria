@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage[margin=1.0in]{geometry} % To set margins
+\usepackage{amsmath}  % This allows me to use the align functionality.
+                      % If you find yourself trying to replicate
+                      % something you found online, ensure you're
+                      % loading the necessary packages!
+\usepackage{amsfonts} % Math font
+\usepackage{fancyvrb}
+\usepackage{hyperref} % For including hyperlinks
+\usepackage[shortlabels]{enumitem}% For enumerated lists with labels specified
+                                  % We had to run tlmgr_install("enumitem") in R
+\usepackage{float}    % For telling R where to put a table/figure
+\usepackage{natbib}        %For the bibliography
+\bibliographystyle{apalike}%For the bibliography
+
+\begin{document}
+\begin{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% QUESTION 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item In Lab 3, you wrangled data from Essentia, Essentia models and LIWC. Rework your 
+solution to Lab 3 using \texttt{tidyverse} \citep{tidyverse} instead of base \texttt{R}.
+Specifically, rewrite your code for steps 1-4 of task 2 using \texttt{tidyverse} \citep{tidyverse}. 
+Make sure to address any issues I noted in your code file, and ensure that your code 
+runs in the directory as it is set up.
+<<size="scriptsize", message=FALSE, warning=FALSE>>=
+# Code to run here.
+@
+\end{enumerate}
+\bibliography{bibliography}
+\end{document}
