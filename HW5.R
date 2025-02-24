@@ -141,46 +141,24 @@ essentia.model.output <- essentia.model.output %>%
   #create column for relaxed by taking a mean of two columns
   mutate(relaxed = rowMeans(select(., eff_relax, nn_relax))) %>%
   #create column for sad by taking a mean of two columns
-  mutate(sad = rowMeans(select(., eff_sad, nn_sad)))
-  
-
-
-
-#Part4 - acoustic and electric averaging
-output.csv$acoustic = rep(NA, times.to.repeat)
-output.csv$electric = rep(NA, times.to.repeat)
-#calculate the value for each row
-for (i in 1:times.to.repeat){
-  #compute acoustic
-  average.acoustic <- output.csv$eff_acoustic[i] + output.csv$nn_acoustic[i]
-  average.acoustic <- average.acoustic/2
-  output.csv$acoustic[i] <- average.acoustic #input acoustic
-  #compute electric 
-  average.electric <- output.csv$eff_electronic[i] + output.csv$nn_electronic[i]
-  average.electric <- average.electric/2
-  output.csv$electric[i] <- average.electric #input electric
-}
-
-#Part5 - compute instrumental
-output.csv$instrumental = rep(NA, times.to.repeat)
-#calculate the value for each row
-for (i in 1:times.to.repeat){
-  average.instrumental <- output.csv$eff_instrumental[i] + output.csv$nn_instrumental[i]
-  average.instrumental <- average.instrumental/2
-  output.csv$instrumental[i] <- average.instrumental #input instrumental
-}
-
-#Part6 - rename a column
-col.to.name <- colnames(output.csv)[colnames(output.csv) == "eff_timbre_bright"] #get the column to rename
-colnames(output.csv)[colnames(output.csv) == col.to.name] <- "timbreBright" #rename the column
-
-#Part7 - delete columns
-output.csv <- output.csv[ , c("artist", "album", "track", "valence", "arousal", "aggressive",
-                              "happy", "party", "relaxed", "sad", "acoustic", "electric",
-                              "instrumental", "timbreBright")]
+  mutate(sad = rowMeans(select(., eff_sad, nn_sad))) %>%
+  #Part4 - acoustic and electric averaging
+  #create column for acoustic by taking a mean of two columns
+  mutate(acoustic = rowMeans(select(., eff_acoustic, nn_acoustic))) %>%
+  #create column for electric sound by taking a mean of two columns
+  mutate(electric = rowMeans(select(., eff_electronic, nn_electronic))) %>%
+  #Part5 - compute instrumental
+  #create column for instrumental by taking a mean of two columns
+  mutate(instrumental = rowMeans(select(., eff_instrumental, nn_instrumental))) %>%
+  #Part6 - rename eff_timbre_bright column
+  rename(timbreBright = eff_timbre_bright) %>%
+  #Part7 - retained created features and columns for artists, album, and track
+  select(artist, album, track, valence, arousal, aggressive,
+           happy, party, relaxed, sad, acoustic, electric,
+           instrumental, timbreBright)
 
 ################################################################################
-# Step 4 - Load LIWC data and compile full dataset
+# Step 4 - Load LIWC data and compile full data set
 ################################################################################
 #Part 1 - load csv file
 lyrics.analysis <- read.csv("LIWCOutput/LIWCOutput.csv")
