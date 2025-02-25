@@ -36,26 +36,27 @@ au.revoir.features <- au.revoir.features|>
 
 
 #Part3 - load JSON file
-open.file <- paste("EssentiaOutput", current.filename, sep = '/')
-file.load <- fromJSON(open.file)
+essentia.output.filename <- paste("EssentiaOutput", au.revoir.filename, sep = '/')
+essentia.output <- fromJSON(essentia.output.filename)
 
 #Part4 - extract song characteristic
-#extract overall loudness
-file.overall.loudnes <- file.load$lowlevel$loudness_ebu128$integrated
-#extract spectral energy
-file.spectral.enegry <- file.load$lowlevel$spectral_energy$mean
-#extract dissonance
-file.dissonance <- file.load$lowlevel$dissonance$mean
-#extract pitch salience
-file.pitch.salience <- file.load$lowlevel$pitch_salience$mean
-#extract tempo in beats per minute
-file.bpm <- file.load$rhythm$bpm
-#extract beats loudness
-file.beats.loudness <- file.load$rhythm$beats_loudness$mean
-#extract danceability
-file.danceability <- file.load$rhythm$danceability
-#extract tuning frequency
-file.tuning.frequency <- file.load$tonal$tuning_frequency
+au.revoir.features <- au.revoir.features|>
+  #extract overall loudness
+  mutate(overall_loudness = essentia.output$lowlevel$loudness_ebu128$integrated) |>
+  #extract spectral energy
+  mutate(spectral_energy = essentia.output$lowlevel$spectral_energy$mean)|>
+  #extract dissonance
+  mutate(dissonance = essentia.output$lowlevel$dissonance$mean) |>
+  #extract pitch salience
+  mutate(pitch_salience = essentia.output$lowlevel$pitch_salience$mean)|>
+  #extract tempo in beats per minute
+  mutate(bpm = essentia.output$rhythm$bpm)|>
+  #extract beats loudness
+  mutate(beats_loudness = essentia.output$rhythm$beats_loudness$mean)|>
+  #extract danceability
+  mutate(danceability = essentia.output$rhythm$danceability)|>
+  #extract tuning frequency
+  mutate(tuning_frequency = essentia.output$tonal$tuning_frequency)
 
 ################################################################################
 # Step 2 - Load and clean data from Essentia models for each .JSON file
