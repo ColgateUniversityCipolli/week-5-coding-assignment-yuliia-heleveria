@@ -61,69 +61,47 @@ au.revoir.features <- au.revoir.features|>
 ################################################################################
 # Step 2 - Load and clean data from Essentia models for each .JSON file
 ################################################################################
+#create a tibble to store audio properties
+three.bands.features <- tibble() 
 
 #load all files from EssentiaOutput
 all.files <- list.files("EssentiaOutput")
 #subset all .json files
 json.count <- str_count(all.files, pattern = ".json")
 json.files <- subset(all.files, json.count>0)
-#create the data frame
-times.to.repeat = length(json.files)
-song.data <- data.frame(artist = rep(NA, times.to.repeat),
-                        album = rep(NA, times.to.repeat),
-                        track = rep(NA, times.to.repeat),
-                        overall.Loudness = rep(NA, times.to.repeat),
-                        spectral.Energy = rep(NA, times.to.repeat),
-                        dissonance = rep(NA, times.to.repeat),
-                        pitch.salience = rep(NA, times.to.repeat),
-                        tempo.in.beats.per.minute = rep(NA, times.to.repeat),
-                        beat.Loudness = rep(NA, times.to.repeat),
-                        danceability = rep(NA, times.to.repeat),
-                        tuning.frequency = rep(NA, times.to.repeat),
-                        stringsAsFactors = FALSE)
+times.to.repeat = length(json.files) #variable for the loop count
+
 #complete Step1 for all .json files
 for (i in 1:times.to.repeat){
   #current file
   curr.file = json.files[i]
-  #remove trailing .json
-  removed.json.file <- str_sub(curr.file, start = 1L, end = -6L)
-  split.curr.file <- str_split(removed.json.file, pattern = '-', simplify =T) #split string
-  #extract the artist
-  current.artist <- split.curr.file[1]
-  song.data$artist[i] <- current.artist
-  #extract the album
-  current.album <- split.curr.file[2]
-  song.data$album[i] <- current.album
-  #extract the track
-  current.track <- split.curr.file[3]
-  song.data$track[i] <- current.track
-  open.curr.file <- paste("EssentiaOutput", curr.file, sep = '/')
-  curr.file.load <- fromJSON(open.curr.file)
-  #extract song characteristic
-  #extract overall loudness
-  overall.loudnes <- curr.file.load$lowlevel$loudness_ebu128$integrated
-  song.data$overall.Loudness[i] <- overall.loudnes
-  #extract spectral energy
-  spectral.enegry <- curr.file.load$lowlevel$spectral_energy$mean
-  song.data$spectral.Energy[i] <- spectral.enegry
-  #extract dissonance
-  dissonance <- curr.file.load$lowlevel$dissonance$mean
-  song.data$dissonance[i] <- dissonance
-  #extract pitch salience
-  pitch.salience <- curr.file.load$lowlevel$pitch_salience$mean
-  song.data$pitch.salience[i] <- pitch.salience
-  #extract tempo in beats per minute
-  bpm <- curr.file.load$rhythm$bpm
-  song.data$tempo.in.beats.per.minute[i] <- bpm
-  #extract beats loudness
-  beats.loudness <- curr.file.load$rhythm$beats_loudness$mean
-  song.data$beat.Loudness[i] <- beats.loudness
-  #extract danceability
-  danceability <- curr.file.load$rhythm$danceability
-  song.data$danceability[i] <-danceability
-  #extract tuning frequency
-  tuning.frequency <- curr.file.load$tonal$tuning_frequency
-  song.data$tuning.frequency[i] <- tuning.frequency
+  
+  #process current file name
+  split.curr.file <- curr.file |>
+    str_sub(start = 1L, end = -6L)|> #remove trailing .json
+    str_split(pattern = '-', simplify =T) #split string
+  
+  #load JSON file
+  current.essentia.output.filename <- paste("EssentiaOutput", curr.file, sep = '/')
+  current.essentia.output <- fromJSON(current.essentia.output.filename)
+  
+  #extract song characteristic into its own tibble
+  new.row <- tibble(
+    artist = split.curr.file[1],
+    album = split.curr.file[2],
+    track = split.curr.file[3],
+    overall_loudness = current.essentia.output$lowlevel$loudness_ebu128$integrated,
+    spectral_energy = current.essentia.output$lowlevel$spectral_energy$mean,
+    dissonance = current.essentia.output$lowlevel$dissonance$mean,
+    pitch_salience = current.essentia.output$lowlevel$pitch_salience$mean,
+    bpm = current.essentia.output$rhythm$bpm,
+    beats_loudness = current.essentia.output$rhythm$beats_loudness$mean,
+    danceability = current.essentia.output$rhythm$danceability,
+    tuning_frequency = current.essentia.output$tonal$tuning_frequency)
+  
+  #add new row for current song to the tibble
+  three.bands.features <- three.bands.features %>%
+    bind_rows(., new.row)
 }
 
 ################################################################################
