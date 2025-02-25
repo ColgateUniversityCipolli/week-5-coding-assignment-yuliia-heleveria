@@ -14,20 +14,26 @@ library("stringr")
 ################################################################################
 # Step 1 - Working with Au Revoir (Adios)
 ################################################################################
+#create a tibble to store object properties
+au.revoir.features <- tibble() 
 
 #Part1 - creating an object
-current.filename <- "The Front Bottoms-Talon Of The Hawk-Au Revoir (Adios).json"
+au.revoir.filename <- "The Front Bottoms-Talon Of The Hawk-Au Revoir (Adios).json"
 
 #Part2 - split the string
-#remove trailing .json
-removed.json.filename <- str_sub(current.filename, start = 1L, end = -6L)
-split.curr.filename <- str_split(removed.json.filename, pattern = '-', simplify =T) #split string
-#extract the artist
-curr.artist <- split.curr.filename[1]
-#extract the album
-curr.album <- split.curr.filename[2]
-#extract the track
-curr.track <- split.curr.filename[3]
+split.au.revoir.filename <- au.revoir.filename |>
+  str_sub(start = 1L, end = -6L)|> #remove trailing .json
+  str_split(pattern = '-', simplify =T) #split string
+
+#extract artist, album, and song - input them into tibble
+au.revoir.features <- au.revoir.features|>
+  mutate(artist = split.au.revoir.filename[1]) |> #extract the artist
+  mutate(albumn = split.au.revoir.filename[2]) |> #extract the album
+  mutate(track = split.au.revoir.filename[3]) |> #extract the track
+  #create a new row will all values
+  add_row(artist = split.au.revoir.filename[1], albumn = split.au.revoir.filename[2],
+          track = split.au.revoir.filename[3])
+
 
 #Part3 - load JSON file
 open.file <- paste("EssentiaOutput", current.filename, sep = '/')
