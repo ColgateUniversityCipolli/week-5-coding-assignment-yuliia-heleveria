@@ -146,16 +146,11 @@ essentia.model.output <- essentia.model.output %>%
 # Step 4 - Load LIWC data and compile full data set
 ################################################################################
 #Part 1 - load csv file
-lyrics.analysis <- read.csv("LIWCOutput/LIWCOutput.csv")
+lyrics.analysis <- read_csv("LIWCOutput/LIWCOutput.csv")
 
 #Part 2 - merge the data
 common.columns <- c("artist", "album", "track")
-merged.two <- merge(song.data, output.csv, #merge first two data frames
-                    by = c("artist", "album", "track"), all.x = T, all.y = T)
-merges.three <- merge(merged.two, lyrics.analysis, #merge all data frames
-                      by = c("artist", "album", "track"), all.x = T, all.y = T)
-
-#Part 3 - rename function column
-column.to.name <- colnames(merges.three)[colnames(merges.three) == "function."] #get the column to rename
-colnames(merges.three)[colnames(merges.three) == column.to.name] <- "funct"
-
+final.three.band.data <- three.bands.features |>
+  inner_join(essentia.model.output, by = common.columns) |>
+  inner_join(lyrics.analysis, by =common.columns)|>
+  rename(funct = "function") #Part 3 - rename function column
